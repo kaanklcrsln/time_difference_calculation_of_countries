@@ -1,0 +1,49 @@
+[09:28, 08.02.2024] +90 536 525 53 00: http://geojson.xyz/naturalearth-3.3.0/ne_50m_admin_0_countries.geojson
+[10:31, 08.02.2024] +90 536 525 53 00: def seviye_hesapla(lst):
+    if not isinstance(lst, list):  # Eğer eleman bir liste değilse, seviye 0'dır.
+        return 0
+    else:
+        # Eğer eleman bir liste ise, en yüksek seviyeyi bulmak için rekürsif olarak fonksiyonu çağır.
+        alt_seviyeler = [seviye_hesapla(eleman) for eleman in lst]
+        return 1 + max(alt_seviyeler, default=0)
+[10:37, 08.02.2024] +90 536 525 53 00: import requests
+import json
+
+def seviye_hesapla(lst):
+    if not isinstance(lst, list):  # Eğer eleman bir liste değilse, seviye 0'dır.
+        return 0
+    else:
+        # Eğer eleman bir liste ise, en yüksek seviyeyi bulmak için rekürsif olarak fonksiyonu çağır.
+        alt_seviyeler = [seviye_hesapla(eleman) for eleman in lst]
+        return 1 + max(alt_seviyeler, default=0)
+
+political_countries_url = "http://geojson.xyz/naturalearth-3.3.0/ne_50m_admin_0_countries.geojson"
+
+response = requests.get(political_countries_url) 
+
+political_countries = json.loads(response.text)
+
+for anahtar in political_countries.keys():
+  print(anahtar)
+
+features = political_countries.get("features")
+if features:
+  first_features = features[0]
+  print(first_features)
+  for anahtar in first_features.keys():
+    print(anahtar)
+
+for feature in political_countries.get("features"):
+  properties = feature["properties"]
+  name = properties["name"]
+  geometry = feature.get("geometry")
+  coordinates = geometry.get("coordinates")
+
+  min_boylam = float('inf')
+  max_boylam = float('inf')
+
+  for ic1 in coordinates:
+    for ic2 in ic1:
+      boylam, enlem = ic2[:2]
+      min_boylam = min(min_boylam, boylam)
+      max_boylam = max(max_boylam, boylam)
